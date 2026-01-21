@@ -74,10 +74,30 @@ export interface DailyLeadEntry {
   conversionRate: number; // Calculated (Sales / MQL) * 100 or specific logic
 }
 
+// --- OKR Types ---
+export type Quarter = 'Q1 2026' | 'Q2 2026' | 'Q3 2026' | 'Q4 2026';
+
+export interface KeyResult {
+  id: string;
+  title: string;
+  currentValue: number;
+  targetValue: number;
+  unit: string; // e.g., '%', 'R$', '#'
+}
+
+export interface OKR {
+  id: string;
+  quarter: Quarter;
+  objective: string;
+  keyResults: KeyResult[];
+  progress: number; // 0-100 calculated
+}
+
 export enum TabView {
   DASHBOARD = 'DASHBOARD',
   LEAD_TRACKER = 'LEAD_TRACKER',
   REVENUE = 'REVENUE',
+  OKRS = 'OKRS',
   LPS = 'LPS',
   SETTINGS = 'SETTINGS'
 }

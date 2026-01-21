@@ -1,5 +1,5 @@
 
-import { Metric, ChartData, LandingPage, DailyLeadEntry, RevenueEntry } from '../types';
+import { Metric, ChartData, LandingPage, DailyLeadEntry, RevenueEntry, OKR } from '../types';
 
 // Simulando delay de rede para parecer real
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -7,6 +7,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // Helper para LocalStorage
 const STORAGE_LEADS_KEY = 'autoforce_lead_history';
 const STORAGE_REVENUE_KEY = 'autoforce_revenue_history';
+const STORAGE_OKRS_KEY = 'autoforce_okrs_history';
 
 export const DataService = {
   getDashboardMetrics: async (): Promise<Metric[]> => {
@@ -107,5 +108,56 @@ export const DataService = {
     history.push(newEntry);
     localStorage.setItem(STORAGE_REVENUE_KEY, JSON.stringify(history));
     return newEntry;
+  },
+
+  // --- OKR Methods ---
+
+  getOKRs: async (): Promise<OKR[]> => {
+    const stored = localStorage.getItem(STORAGE_OKRS_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+    // Mock inicial
+    const mockOKRs: OKR[] = [
+        {
+            id: '1',
+            quarter: 'Q1 2026',
+            objective: 'Aumentar a penetração de mercado em Concessionárias Honda',
+            progress: 45,
+            keyResults: [
+                { id: 'kr1', title: 'Fechar 10 novos contratos com grupos Honda', currentValue: 4, targetValue: 10, unit: '#' },
+                { id: 'kr2', title: 'Aumentar leads qualificados desse segmento em 20%', currentValue: 8, targetValue: 20, unit: '%' }
+            ]
+        },
+        {
+            id: '2',
+            quarter: 'Q2 2026',
+            objective: 'Lançar nova feature de IA Generativa',
+            progress: 0,
+            keyResults: [
+                { id: 'kr3', title: 'Finalizar desenvolvimento do Beta', currentValue: 0, targetValue: 100, unit: '%' },
+                { id: 'kr4', title: 'Conseguir 50 usuários beta testando', currentValue: 0, targetValue: 50, unit: '#' }
+            ]
+        }
+    ];
+    localStorage.setItem(STORAGE_OKRS_KEY, JSON.stringify(mockOKRs));
+    return mockOKRs;
+  },
+
+  saveOKR: async (okr: OKR): Promise<OKR> => {
+      await delay(500);
+      const stored = localStorage.getItem(STORAGE_OKRS_KEY);
+      let list: OKR[] = stored ? JSON.parse(stored) : [];
+      
+      // Update if exists, else add
+      const idx = list.findIndex(o => o.id === okr.id);
+      if (idx >= 0) {
+          list[idx] = okr;
+      } else {
+          list.push(okr);
+      }
+      
+      localStorage.setItem(STORAGE_OKRS_KEY, JSON.stringify(list));
+      return okr;
   }
 };

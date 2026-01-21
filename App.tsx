@@ -3,6 +3,7 @@ import Login from './components/Login';
 import LPView from './components/LPView';
 import LeadTracker from './components/LeadTracker';
 import RevenueTracker from './components/RevenueTracker';
+import OKRTracker from './components/OKRTracker';
 import { DataService } from './services/dataService';
 import { User, Metric, ChartData, TabView, LandingPage } from './types';
 import { 
@@ -137,6 +138,14 @@ const App: React.FC = () => {
             </button>
 
             <button 
+              onClick={() => setCurrentTab(TabView.OKRS)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${currentTab === TabView.OKRS ? 'bg-autoforce-blue text-white shadow-lg' : 'text-autoforce-lightGrey hover:bg-white/5'}`}
+            >
+              <Target size={20} />
+              <span className="font-medium">Metas & OKRs</span>
+            </button>
+
+            <button 
               onClick={() => setCurrentTab(TabView.LPS)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${currentTab === TabView.LPS ? 'bg-autoforce-blue text-white shadow-lg' : 'text-autoforce-lightGrey hover:bg-white/5'}`}
             >
@@ -184,6 +193,7 @@ const App: React.FC = () => {
               {currentTab === TabView.DASHBOARD && "Visão Geral de Performance"}
               {currentTab === TabView.LEAD_TRACKER && "Acompanhamento Diário"}
               {currentTab === TabView.REVENUE && "Ganhos & Resultados"}
+              {currentTab === TabView.OKRS && "Gestão de OKRs"}
               {currentTab === TabView.LPS && "Google Analytics"}
               {currentTab === TabView.SETTINGS && "Configurações"}
             </h1>
@@ -340,9 +350,14 @@ const App: React.FC = () => {
                 <LeadTracker />
             )}
 
-            {/* Revenue Tracker View (NEW) */}
+            {/* Revenue Tracker View */}
             {currentTab === TabView.REVENUE && (
                 <RevenueTracker />
+            )}
+
+            {/* OKR Tracker View (NEW) */}
+            {currentTab === TabView.OKRS && (
+                <OKRTracker />
             )}
 
             {/* LP View */}
