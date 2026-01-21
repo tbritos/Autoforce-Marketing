@@ -1,3 +1,4 @@
+
 export interface Metric {
   id: string;
   label: string;
@@ -23,6 +24,18 @@ export interface User {
   role: string;
 }
 
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+  status: 'online' | 'busy' | 'offline';
+  lastActive: string;
+  leadsGenerated: number;
+  salesClosed: number;
+  goalProgress: number;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
@@ -30,35 +43,41 @@ export interface ChatMessage {
   isThinking?: boolean;
 }
 
-export interface TeamMember {
+export interface RevenueEntry {
   id: string;
-  name: string;
-  role: string;
-  avatar: string;
-  leadsGenerated: number;
-  salesClosed: number;
-  conversionRate: number;
-  lastActive: string;
-  status: 'online' | 'offline' | 'busy';
-  goalProgress: number; // 0-100
+  date: string;
+  businessName: string;
+  setupValue: number;
+  mrrValue: number;
+  origin: string;
+  product: string;
 }
 
 export interface LandingPage {
   id: string;
   name: string;
-  url: string;
-  visitors: number;
-  leads: number;
+  path: string; // GA4 path style
+  views: number;
+  users: number;
+  conversions: number;
   conversionRate: number;
-  bounceRate: number;
-  status: 'active' | 'paused' | 'draft';
-  campaign: string;
-  lastUpdated: string;
+  avgEngagementTime: string;
+  source: 'google_analytics';
+}
+
+export interface DailyLeadEntry {
+  id: string;
+  date: string; // ISO YYYY-MM-DD
+  mql: number;
+  sql: number;
+  sales: number;
+  conversionRate: number; // Calculated (Sales / MQL) * 100 or specific logic
 }
 
 export enum TabView {
   DASHBOARD = 'DASHBOARD',
-  TEAM = 'TEAM',
+  LEAD_TRACKER = 'LEAD_TRACKER',
+  REVENUE = 'REVENUE',
   LPS = 'LPS',
   SETTINGS = 'SETTINGS'
 }

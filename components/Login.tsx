@@ -71,12 +71,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 
                 {/* Logo Section */}
                 <div className="mb-12 flex flex-col items-center animate-fade-in-down">
-                    <svg width="60" height="60" viewBox="0 0 40 40" fill="none" className="mb-4 drop-shadow-[0_0_15px_rgba(20,64,255,0.5)]">
-                        <path d="M15 10H25L18 22H8L15 10Z" fill="#1440FF"/>
-                        <path d="M22 10H38L31 22H25L22 10Z" fill="#fff"/>
-                        <path d="M8 22H18L11 34H1L8 22Z" fill="#1440FF"/>
-                    </svg>
-                    <h1 className="font-display font-bold text-2xl tracking-wider text-white">AUTOFORCE</h1>
+                    <img 
+                      src="https://static.autodromo.com.br/uploads/1dc32f4d-ab47-428d-91dd-756266d45b47_LOGOTIPO-AUTOFORCE-HORIZONTAL.svg" 
+                      alt="AutoForce" 
+                      className="h-12 w-auto mb-4 object-contain"
+                    />
                     <p className="text-autoforce-lightGrey text-xs tracking-[0.2em] mt-1 uppercase">Intelligence System</p>
                 </div>
 

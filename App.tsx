@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Login from './components/Login';
-import Chatbot from './components/Chatbot';
-import TeamView from './components/TeamView';
 import LPView from './components/LPView';
+import LeadTracker from './components/LeadTracker';
+import RevenueTracker from './components/RevenueTracker';
 import { DataService } from './services/dataService';
-import { User, Metric, ChartData, TabView, TeamMember, LandingPage } from './types';
+import { User, Metric, ChartData, TabView, LandingPage } from './types';
 import { 
   LayoutDashboard, 
-  Users, 
   FileText, 
   Settings, 
   LogOut, 
@@ -17,7 +16,9 @@ import {
   Share2,
   Globe,
   Award,
-  RefreshCw
+  RefreshCw,
+  ClipboardList,
+  DollarSign
 } from 'lucide-react';
 import { PerformanceChart, ConversionBarChart } from './components/Charts';
 
@@ -32,7 +33,6 @@ const App: React.FC = () => {
   // Data State
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [landingPages, setLandingPages] = useState<LandingPage[]>([]);
   
   const [loadingData, setLoadingData] = useState(false);
@@ -66,13 +66,10 @@ const App: React.FC = () => {
       if (currentTab === TabView.DASHBOARD && chartData.length === 0) {
         const history = await DataService.getPerformanceHistory();
         setChartData(history);
-        const lps = await DataService.getLandingPages(); // Top LPs for dashboard
+        const lps = await DataService.getLandingPagesGA(); // Get Top LPs
         setLandingPages(lps);
-      } else if (currentTab === TabView.TEAM && teamMembers.length === 0) {
-        const members = await DataService.getTeamMembers();
-        setTeamMembers(members);
       } else if (currentTab === TabView.LPS && landingPages.length === 0) {
-        const lps = await DataService.getLandingPages();
+        const lps = await DataService.getLandingPagesGA();
         setLandingPages(lps);
       }
     } catch (error) {
@@ -92,7 +89,6 @@ const App: React.FC = () => {
     localStorage.removeItem('autoforce_user');
     setMetrics([]);
     setChartData([]);
-    setTeamMembers([]);
   };
 
   if (initializing) return <div className="min-h-screen bg-[#00020A] flex items-center justify-center text-white"><RefreshCw className="animate-spin mr-2"/> Carregando AutoForce...</div>;
@@ -107,14 +103,12 @@ const App: React.FC = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-autoforce-darkest border-r border-autoforce-grey/20 flex flex-col justify-between shrink-0 z-50">
         <div>
-          <div className="p-6 border-b border-autoforce-grey/20">
-             <div className="flex items-center gap-2">
-                 <svg width="40" height="24" viewBox="0 0 40 24" fill="none">
-                    <path d="M15 0H25L18 12H8L15 0Z" fill="#1440FF"/>
-                    <path d="M22 0H38L31 12H25L22 0Z" fill="#1440FF"/>
-                 </svg>
-                 <span className="font-display font-bold text-xl tracking-wide">AUTOFORCE</span>
-             </div>
+          <div className="p-6 border-b border-autoforce-grey/20 flex justify-center">
+             <img 
+               src="https://static.autodromo.com.br/uploads/1dc32f4d-ab47-428d-91dd-756266d45b47_LOGOTIPO-AUTOFORCE-HORIZONTAL.svg" 
+               alt="AutoForce" 
+               className="h-8 w-auto object-contain"
+             />
           </div>
 
           <nav className="p-4 space-y-2">
@@ -127,11 +121,19 @@ const App: React.FC = () => {
             </button>
             
             <button 
-              onClick={() => setCurrentTab(TabView.TEAM)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${currentTab === TabView.TEAM ? 'bg-autoforce-blue text-white shadow-lg' : 'text-autoforce-lightGrey hover:bg-white/5'}`}
+              onClick={() => setCurrentTab(TabView.LEAD_TRACKER)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${currentTab === TabView.LEAD_TRACKER ? 'bg-autoforce-blue text-white shadow-lg' : 'text-autoforce-lightGrey hover:bg-white/5'}`}
             >
-              <Users size={20} />
-              <span className="font-medium">Time</span>
+              <ClipboardList size={20} />
+              <span className="font-medium">Acompanhamento</span>
+            </button>
+            
+            <button 
+              onClick={() => setCurrentTab(TabView.REVENUE)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${currentTab === TabView.REVENUE ? 'bg-autoforce-blue text-white shadow-lg' : 'text-autoforce-lightGrey hover:bg-white/5'}`}
+            >
+              <DollarSign size={20} />
+              <span className="font-medium">Ganhos</span>
             </button>
 
             <button 
@@ -139,7 +141,7 @@ const App: React.FC = () => {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${currentTab === TabView.LPS ? 'bg-autoforce-blue text-white shadow-lg' : 'text-autoforce-lightGrey hover:bg-white/5'}`}
             >
               <FileText size={20} />
-              <span className="font-medium">Landing Pages</span>
+              <span className="font-medium">Analytics (GA4)</span>
             </button>
 
             <button 
@@ -180,8 +182,9 @@ const App: React.FC = () => {
           <div>
             <h1 className="text-2xl font-display font-bold text-white">
               {currentTab === TabView.DASHBOARD && "Visão Geral de Performance"}
-              {currentTab === TabView.TEAM && "Gestão do Time"}
-              {currentTab === TabView.LPS && "Landing Pages"}
+              {currentTab === TabView.LEAD_TRACKER && "Acompanhamento Diário"}
+              {currentTab === TabView.REVENUE && "Ganhos & Resultados"}
+              {currentTab === TabView.LPS && "Google Analytics"}
               {currentTab === TabView.SETTINGS && "Configurações"}
             </h1>
             <p className="text-autoforce-lightGrey text-sm flex items-center gap-2">
@@ -315,7 +318,7 @@ const App: React.FC = () => {
                                 {landingPages.slice(0, 3).map((lp, idx) => (
                                     <tr key={idx} className="border-b border-autoforce-grey/10 hover:bg-autoforce-blue/5 transition-colors">
                                         <td className="px-4 py-3 font-medium text-white">{lp.name}</td>
-                                        <td className="px-4 py-3">{lp.visitors.toLocaleString()}</td>
+                                        <td className="px-4 py-3">{lp.users.toLocaleString()}</td>
                                         <td className="px-4 py-3">
                                             <span className={`px-2 py-1 rounded text-xs font-bold ${lp.conversionRate > 5 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}`}>
                                                 {lp.conversionRate}%
@@ -332,9 +335,14 @@ const App: React.FC = () => {
             </div>
             )}
 
-            {/* Team View */}
-            {currentTab === TabView.TEAM && (
-                <TeamView members={teamMembers} loading={loadingData} />
+            {/* Lead Tracker View */}
+            {currentTab === TabView.LEAD_TRACKER && (
+                <LeadTracker />
+            )}
+
+            {/* Revenue Tracker View (NEW) */}
+            {currentTab === TabView.REVENUE && (
+                <RevenueTracker />
             )}
 
             {/* LP View */}
@@ -355,9 +363,6 @@ const App: React.FC = () => {
         </div>
 
       </main>
-
-      {/* AI Chatbot Overlay */}
-      <Chatbot />
     </div>
   );
 };

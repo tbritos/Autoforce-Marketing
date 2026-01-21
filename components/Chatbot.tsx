@@ -39,13 +39,11 @@ const Chatbot: React.FC = () => {
     setInputValue('');
     setIsLoading(true);
 
+    // Build history from previous messages (excluding the new one which is sent as 'message' param)
     const history = messages.map(m => ({
       role: m.role,
       parts: [{ text: m.text }]
     }));
-
-    // Add current message to history for the API call
-    history.push({ role: 'user', parts: [{ text: userMsg.text }] });
 
     try {
       const responseText = await sendMessageToGemini(userMsg.text, history, useThinking);

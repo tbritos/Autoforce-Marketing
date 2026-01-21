@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { LandingPage } from '../types';
-import { ExternalLink, Edit, Trash2, ArrowUpRight, ArrowDownRight, Eye, MousePointer } from 'lucide-react';
+import { ExternalLink, ArrowUpRight, Clock, Users, Activity } from 'lucide-react';
 
 interface LPViewProps {
   pages: LandingPage[];
@@ -9,37 +10,46 @@ interface LPViewProps {
 
 const LPView: React.FC<LPViewProps> = ({ pages, loading }) => {
   if (loading) {
-    return <div className="text-white text-center py-20 animate-pulse">Carregando dados das Landing Pages...</div>;
+    return <div className="text-white text-center py-20 animate-pulse">Sincronizando com Google Analytics...</div>;
   }
 
   return (
-    <div className="p-8 space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-2">
+    <div className="p-8 space-y-6 animate-fade-in-up">
+        {/* GA Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-4 bg-autoforce-darkest p-6 rounded-xl border border-autoforce-grey/20">
             <div>
-            <h2 className="text-xl font-bold text-white mb-1">Landing Pages & Campanhas</h2>
-            <p className="text-autoforce-lightGrey text-sm">Monitore a conversão e o tráfego de suas páginas de captura</p>
+                <div className="flex items-center gap-2 mb-2">
+                    {/* Fake GA Icon */}
+                    <div className="w-6 h-6 bg-[#E37400] rounded-full flex items-center justify-center">
+                        <Activity size={14} className="text-white" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white">Google Analytics 4</h2>
+                </div>
+                <p className="text-autoforce-lightGrey text-sm">Dados de tráfego e conversão sincronizados em tempo real.</p>
+                <div className="flex items-center gap-2 mt-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span className="text-xs text-green-500 font-bold uppercase tracking-wider">Conectado: AutoForce Property ID-99382</span>
+                </div>
             </div>
-            <div className="flex gap-2">
-                <button className="bg-autoforce-darkest border border-autoforce-grey text-white px-4 py-2 rounded text-sm hover:bg-white/5 transition">
-                    Filtrar por Status
-                </button>
-                <button className="bg-autoforce-blue hover:bg-autoforce-secondary text-white px-4 py-2 rounded text-sm font-bold transition shadow-lg shadow-autoforce-blue/20">
-                    + Nova Landing Page
+            <div>
+                <button className="bg-autoforce-black border border-autoforce-grey/30 text-autoforce-lightGrey px-4 py-2 rounded text-sm hover:text-white transition flex items-center gap-2">
+                    <ExternalLink size={14} />
+                    Abrir Analytics
                 </button>
             </div>
         </div>
 
-        <div className="bg-autoforce-darkest border border-autoforce-grey/20 rounded-lg overflow-hidden">
+        <div className="bg-autoforce-darkest border border-autoforce-grey/20 rounded-lg overflow-hidden shadow-lg">
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-autoforce-black/40 text-autoforce-lightGrey text-xs uppercase tracking-wider border-b border-autoforce-grey/20">
-                            <th className="p-4 font-semibold">Nome da Página / URL</th>
-                            <th className="p-4 font-semibold text-center">Status</th>
-                            <th className="p-4 font-semibold text-right">Visitantes</th>
-                            <th className="p-4 font-semibold text-right">Leads</th>
-                            <th className="p-4 font-semibold text-right">Conversão</th>
-                            <th className="p-4 font-semibold text-right">Ações</th>
+                            <th className="p-4 font-semibold">Caminho da Página (Path)</th>
+                            <th className="p-4 font-semibold text-right">Visualizações</th>
+                            <th className="p-4 font-semibold text-right">Usuários</th>
+                            <th className="p-4 font-semibold text-right">Tempo Médio</th>
+                            <th className="p-4 font-semibold text-right">Conversões (Eventos)</th>
+                            <th className="p-4 font-semibold text-right">Taxa Conv.</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-autoforce-grey/10">
@@ -48,50 +58,39 @@ const LPView: React.FC<LPViewProps> = ({ pages, loading }) => {
                                 <td className="p-4">
                                     <div className="flex flex-col">
                                         <span className="font-bold text-white">{page.name}</span>
-                                        <a href="#" className="text-xs text-autoforce-blue hover:underline flex items-center gap-1 mt-1">
-                                            /{page.url} <ExternalLink size={10} />
-                                        </a>
-                                        <span className="text-[10px] text-autoforce-grey mt-1">Campanha: {page.campaign}</span>
+                                        <div className="flex items-center gap-1 mt-1 text-xs text-autoforce-blue">
+                                            <span>{page.path}</span>
+                                            <ExternalLink size={10} />
+                                        </div>
                                     </div>
                                 </td>
-                                <td className="p-4 text-center">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                        page.status === 'active' ? 'bg-green-900/30 text-green-400 border border-green-500/30' : 
-                                        page.status === 'paused' ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-500/30' : 
-                                        'bg-gray-800 text-gray-400 border border-gray-600/30'
-                                    }`}>
-                                        {page.status === 'active' ? 'Ativa' : page.status === 'paused' ? 'Pausada' : 'Rascunho'}
+                                <td className="p-4 text-right">
+                                    <div className="flex items-center justify-end gap-2 text-white">
+                                        {page.views.toLocaleString()}
+                                    </div>
+                                </td>
+                                <td className="p-4 text-right">
+                                    <div className="flex items-center justify-end gap-2 text-autoforce-lightGrey">
+                                        <Users size={14} className="text-autoforce-grey" />
+                                        {page.users.toLocaleString()}
+                                    </div>
+                                </td>
+                                <td className="p-4 text-right">
+                                    <div className="flex items-center justify-end gap-2 text-autoforce-lightGrey">
+                                        <Clock size={14} className="text-autoforce-grey" />
+                                        {page.avgEngagementTime}
+                                    </div>
+                                </td>
+                                <td className="p-4 text-right">
+                                    <div className="flex items-center justify-end gap-2 text-white font-bold">
+                                        <ArrowUpRight size={14} className="text-green-500" />
+                                        {page.conversions.toLocaleString()}
+                                    </div>
+                                </td>
+                                <td className="p-4 text-right">
+                                    <span className={`px-2 py-1 rounded text-xs font-bold ${page.conversionRate > 10 ? 'bg-green-900/30 text-green-400' : 'bg-autoforce-blue/10 text-white'}`}>
+                                        {page.conversionRate}%
                                     </span>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <div className="flex items-center justify-end gap-2 text-white">
-                                        <Eye size={14} className="text-autoforce-grey" />
-                                        {page.visitors.toLocaleString()}
-                                    </div>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <div className="flex items-center justify-end gap-2 text-white">
-                                        <MousePointer size={14} className="text-autoforce-grey" />
-                                        {page.leads.toLocaleString()}
-                                    </div>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <div className="flex flex-col items-end">
-                                        <span className={`font-bold ${page.conversionRate > 10 ? 'text-green-400' : page.conversionRate > 5 ? 'text-white' : 'text-red-400'}`}>
-                                            {page.conversionRate}%
-                                        </span>
-                                        <span className="text-xs text-autoforce-grey">Bounce: {page.bounceRate}%</span>
-                                    </div>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button className="p-2 hover:bg-autoforce-blue/20 rounded text-autoforce-blue transition" title="Editar">
-                                            <Edit size={16} />
-                                        </button>
-                                        <button className="p-2 hover:bg-red-900/20 rounded text-red-400 transition" title="Excluir">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
                                 </td>
                             </tr>
                         ))}
